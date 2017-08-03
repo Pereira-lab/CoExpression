@@ -1,6 +1,4 @@
-# FEUP - Thesis
-
-## Co-expression networks between protein encoding mitochondrial genes and all the remaining genes in human tissues
+# Co-expression networks between protein encoding mitochondrial genes and all the remaining genes in human tissues
 
 #### Compile
 
