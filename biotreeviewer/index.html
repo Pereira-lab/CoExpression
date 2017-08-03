@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+
+<head>
+    <meta charset="utf-8">
+    <!-- Latest compiled and minified CSS -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="phylotree.js"></script>
+    <script src="saveSvgAsPng.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/buttons/1.3.1/css/buttons.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
+
+
+
+    </script>
+
+    <link href="phylotree.css" rel="stylesheet">
+
+    <style>
+
+        .fa-rotate-45 {
+          -webkit-transform: rotate(45deg);
+          -moz-transform: rotate(45deg);
+          -ms-transform: rotate(45deg);
+          -o-transform: rotate(45deg);
+          transform: rotate(45deg);
+        }
+
+        .fa-rotate-135 {
+          -webkit-transform: rotate(135deg);
+          -moz-transform: rotate(135deg);
+          -ms-transform: rotate(135deg);
+          -o-transform: rotate(135deg);
+          transform: rotate(135deg);
+        }
+
+   </style>
+</head>
+
+<body style = 'padding-top: 70px;'>
+
+<!--
+###############################################################################################################################
+-->
+
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/dissertacao/viewer">Bio Tree Viewer</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Import Data <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <!---<li><a href="#" data-toggle="modal" data-target="#newick_modal">Input Tree</a></li>--->
+            <li><a href="#">Input Newick Tree<input type="file" id="newick_file"/></a></li>
+            <li class="divider"></li>
+            <li><a href="#">Input Biological Info<input type="file" id="biological_file"/></a></li>
+            <!---<li class="divider"></li>--->
+            <!---<li><a href="#" data-toggle="modal" data-target="#newick_export_modal">Export</a></li>--->
+          </ul>
+        </li>
+        <!--<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Display options <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#" id = 'display_dengrogram'>Dendrogram</a></li>
+            <li><a href="#" id = 'display_tree'>Tree</a></li>
+             <li class="divider"></li>
+            <li><a href="#">Horizontal</a></li>
+            <li><a href="#">Vertical</a></li>
+          </ul>
+        </li>-->
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">View > 0.9<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#" id = "kegg_09_UPGMA" >KEGG - UPGMA</a></li>
+            <li><a href="#" id = "kegg_09_NJ" >KEGG - NJ</a></li>
+            <li class="divider"></li>
+            <li><a href="#" id = "go_bp_09_UPGMA" >GO BP - UPGMA</a></li>
+            <li><a href="#" id = "go_bp_09_NJ" >GO BP - NJ</a></li>
+            <li class="divider"></li>
+            <li><a href="#" id = "go_cc_09_UPGMA" >GO CC - UPGMA</a></li>
+            <li><a href="#" id = "go_cc_09_NJ" >GO CC - NJ</a></li>
+            <li class="divider"></li>
+            <li><a href="#" id = "go_mf_09_UPGMA" >GO MF - UPGMA</a></li>
+            <li><a href="#" id = "go_mf_09_NJ" >GO MF - NJ</a></li>
+
+          </ul>
+        </li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">View > 0.8 <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#" id = "kegg_08_UPGMA" >KEGG - UPGMA</a></li>
+            <li><a href="#" id = "kegg_08_NJ" >KEGG - NJ</a></li>
+            <li class="divider"></li>
+            <li><a href="#" id = "go_bp_08_UPGMA" >GO BP - UPGMA</a></li>
+            <li><a href="#" id = "go_bp_08_NJ" >GO BP - NJ</a></li>
+            <li class="divider"></li>
+            <li><a href="#" id = "go_cc_08_UPGMA" >GO CC - UPGMA</a></li>
+            <li><a href="#" id = "go_cc_08_NJ" >GO CC - NJ</a></li>
+            <li class="divider"></li>
+            <li><a href="#" id = "go_mf_08_UPGMA" >GO MF - UPGMA</a></li>
+            <li><a href="#" id = "go_mf_08_NJ" >GO MF - NJ</a></li>
+          </ul>
+        </li>
+        <li><a href="#" id = "go_help_modal">Help</a></li>
+
+     </ul>
+     <ul class="nav navbar-nav navbar-right navbar-form">
+              <div class="form-group">
+                <input type="text" id = 'branch_filter' class="form-control" placeholder="Filter branches on">
+              </div>
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Selection <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                  <li><a href="#" id = "select_all">Select all</a></li>
+                  <li><a href="#" id = "select_all_internal">Select all internal nodes</a></li>
+                  <li><a href="#" id = "select_all_leaves">Select all leaf nodes</a></li>
+                  <li><a href="#" id = "clear_internal">Clear all internal nodes</a></li>
+                  <li><a href="#" id = "clear_leaves">Clear all leaves</a></li>
+                  <li><a href="#" id = "select_none">Clear selection</a></li>
+               </ul>
+     </ul>
+
+        <!--<div class="form-group navbar-form navbar-right">
+
+          <li><a href="#">About</a></li>
+          <input type="text" id = 'branch_filter' class="form-control" placeholder="Filter branches on">
+        </div>-->
+
+
+
+
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class="modal" id = 'newick_modal'>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Newick string to render</h4>
+      </div>
+      <div class="modal-body" id = 'newick_body'>
+         <textarea id = 'nwk_spec' autofocus = true placeholder = "" style = 'width: 100%; height: 100%' rows = 20 selectionStart = 1 selectionEnd = 1000>(a : 0.1, (b : 0.11, (c : 0.12, d : 0.13) : 0.14) : 0.15)</textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id = 'validate_newick'>Display this tree</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal" id = 'newick_export_modal'>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body" id = 'newick_body'>
+         <textarea id = 'nwk_export_spec' autofocus = true placeholder = "" style = 'width: 100%; height: 100%' rows = 20></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="bioModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" id="modal-dialog" role="document" style="width: 98%; padding: 0">
+    <div class="modal-content" id="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Common Pathways in selected tissues</h4>
+      </div>
+      <div class="modal-body" style="overflow-x: auto; overflow-y: auto">
+        <table class="table table-hover" width="100%"id="biologicalTable">
+  </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Help -->
+<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h2 class="modal-title">Help</h2>
+      </div>
+      <div class="modal-body">
+        <h4>Import Tree</h4>
+        Import a tree in newick format in <code>Import Data -> Input Newick Tree</code> dropdown.
+        <hr>
+        <h4>Import Biologic data</h4>
+        To enable the biological functionality you need upload through <code> Import Data -> Input Biological Info</code> the tissue network data with the following syntax.
+        <pre>Tissue_Name&lt;tab&gt;Gene1&lt;tab&gt;Pathway&lt;tab&gt;Gene2,Gene2,...,GeneN</pre>
+        The tissues names <mark>must match</mark> the tip names in the tree. This example represents an interaction between Gene with Gene2, Gene3, (...), GeneN with the pathway "Pathway" involved.
+        <hr>
+        <h4>Export Biologic Info</h4>
+        By clicking on node and selecting <code>Biological Function</code> option, common pathways and gene information will appear for the selected tissues. You can export the results by clicking on <code>Excel</code> or <code>CSV</code> buttons according to the desired format. You can also search for pathways and genes within the table by using the <code>search box</code>.
+        <hr>
+        <h4>Export Tree</h4>
+        It is possible to export the tree in .png format with the live selections by clicking <code>Export Tree</code> button on the top right.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info" data-dismiss="modal">Ok, I got it.</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Loading-->
+<div class="modal fade" id="loading-modal" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="padding-top:15%; overflow-y:visible;">
+  <div class="modal-dialog"  role="document">
+    <div class="modal-content" id="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="myModalLabel">Loading biologic data. Please wait.</h2>
+      </div>
+      <div class="modal-body" style="overflow-x: auto; overflow-y: auto">
+        <div class="progress progress-striped active" style="margin-bottom:0;"><div class="progress-bar" id="progress-bar" style="width: 0%" ></div></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class = 'container' id = "main_display">
+
+    <div class = 'row'>
+        <div class = 'col-md-12'>
+            <div class="btn-toolbar" role="toolbar">
+              <div class="btn-group">
+                <button type="button" class="btn btn-default btn-sm" data-direction = 'vertical' data-amount = '1' title = "Expand vertical spacing">
+                    <i class="fa fa-arrows-v" ></i>
+                </button>
+                 <button type="button" class="btn btn-default btn-sm" data-direction = 'vertical' data-amount = '-1' title = "Compress vertical spacing">
+                    <i class="fa  fa-compress fa-rotate-135" ></i>
+                </button>
+                <button type="button" class="btn btn-default btn-sm" data-direction = 'horizontal' data-amount = '1' title = "Expand horizonal spacing">
+                    <i class="fa fa-arrows-h" ></i>
+                </button>
+                 <button type="button" class="btn btn-default btn-sm" data-direction = 'horizontal' data-amount = '-1' title = "Compress horizonal spacing">
+                    <i class="fa  fa-compress fa-rotate-45" ></i>
+                </button>
+                 <button type="button" class="btn btn-default btn-sm" id = "sort_ascending" title = "Sort deepest clades to the bototm">
+                    <i class="fa fa-sort-amount-asc" ></i>
+                </button>
+                 <button type="button" class="btn btn-default btn-sm" id = "sort_descending" title = "Sort deepsest clades to the top">
+                    <i class="fa fa-sort-amount-desc" ></i>
+                </button>
+                <!-- <button type="button" class="btn btn-default btn-sm" id = "sort_original" title = "Restore original order">
+                    <i class="fa fa-sort" ></i>
+                </button> -->
+              </div>
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-default active btn-sm">
+                <input type="radio" name="options" class = "phylotree-layout-mode" data-mode = "linear" autocomplete="off" checked title = "Layout left-to-right"> Linear
+              </label>
+              <label class="btn btn-default  btn-sm">
+                <input type="radio" name="options" class = "phylotree-layout-mode" data-mode = "radial" autocomplete="off" title = "Layout radially"> Radial
+              </label>
+            </div>
+            <!--<div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-default  btn-sm">
+                <input type="radio" name="options" class = "phylotree-layout-animation" data-mode = "radial" autocomplete="off" title = "Animations off" checked> Animation
+              </label>
+            </div>-->
+
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-default btn-sm">
+                <input type="radio" class = "phylotree-align-toggler" data-align = "left" name="options-align" autocomplete="off"  title = "Align tips labels to branches">
+                    <i class="fa fa-align-left" ></i>
+                </input>
+
+              </label>
+              <label class="btn btn-default active btn-sm">
+               <input type="radio" class = "phylotree-align-toggler" data-align = "right" name="options-align" autocomplete="off" checked title = "Align tips labels to the edge of the plot">
+                    <i class="fa fa-align-right" ></i>
+                </input>
+              </label>
+            </div>
+
+            <!--<label class = "pull-right">Selected <span class="badge" id = "selected_branch_counter">0</span> and filtered <span class="badge" id = "selected_filtered_counter">0</span> branches</label>-->
+            <button type="button" name="button" class="btn btn-success pull-right" id="export_svg"><span class="glyphicon glyphicon-export"></span> Export Tree</button>
+           </div>
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-md-12'>
+            <div id = 'tree_container' class = 'tree-widget'>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+  <hr>
+  <div class="container text-center">
+    <p class="text-muted credit">Made by <a href="/">João Almeida</a>. Based on phylotree.js</p>
+  </div>
+</footer>
+
+<!--
+###############################################################################################################################
+-->
+
+<script>
+var hideInProgress = false;
+var showModalId = '';
+
+function showModal(elementId) {
+    if (hideInProgress) {
+        showModalId = elementId;
+    } else {
+        $("#" + elementId).modal("show");
+    }
+};
+
+function hideModal(elementId) {
+    hideInProgress = true;
+    $("#" + elementId).on('hidden.bs.modal', hideCompleted);
+    $("#" + elementId).modal("hide");
+
+    function hideCompleted() {
+        hideInProgress = false;
+        if (showModalId) {
+            showModal(showModalId);
+        }
+        showModalId = '';
+        $("#" + elementId).off('hidden.bs.modal');
+    }
+};
+var pathwayInfo = [];
+
+function parseBioFile(file){
+  var tissueInfo = {};
+  var lines = file.split("\n")
+
+  for (var i = 0; i < lines.length-1; i++) {
+    var lineSplit = lines[i].split("\t");
+
+    if(lineSplit[2] != "NONE") {
+      if (!tissueInfo[lineSplit[0]])
+        tissueInfo[lineSplit[0]] = {};
+
+      if (!tissueInfo[lineSplit[0]][lineSplit[2]])
+        tissueInfo[lineSplit[0]][lineSplit[2]] = [];
+
+      var genesNaPathway = tissueInfo[lineSplit[0]][lineSplit[2]];
+
+      if (genesNaPathway.indexOf(lineSplit[1]) == -1)
+        genesNaPathway.push(lineSplit[1]);
+
+        var genesT = lineSplit[3].split(",");
+
+        for (var j=0; j < genesT.length; j++){
+          if (genesNaPathway.indexOf(genesT[j]) == -1)
+            genesNaPathway.push(genesT[j]);
+        }
+
+      tissueInfo[lineSplit[0]][lineSplit[2]] = genesNaPathway;
+    }
+  }
+  pathwayInfo = tissueInfo;
+  console.log("Biologic data parsing finished.");
+  hideModal("loading-modal");
+  $("#progress-bar").width(0 + "%");
+
+}
+
+function is_biologically_common(tissues){
+  var commonPathways = [];
+  for (var i = 0; i < tissues.length-1; i++) {
+    if(i !=0){
+      commonPathways = commonPathways.filter({}.hasOwnProperty.bind(pathwayInfo[tissues[i+1]]));
+      if(commonPathways.length < 1){
+          return [];
+        }
+      }
+    else {
+      commonPathways = Object.keys(pathwayInfo[tissues[i]]).filter({}.hasOwnProperty.bind(pathwayInfo[tissues[i+1]]));
+      if(commonPathways.length < 1)
+        return [];
+    }
+  }
+
+  return commonPathways;
+}
+
+function get_genes_common(tissues,pathways){
+  var map = {};
+  for (var i = 0; i < pathways.length; i++) {
+    var commonGenes = [];
+
+    for (var j = 0; j < tissues.length-1; j++) {
+      if (j != 0){
+        commonGenes = commonGenes.filter(function(n) {
+            return pathwayInfo[tissues[j+1]][pathways[i]].indexOf(n) !== -1;
+        });
+
+        if(commonGenes.length < 1){
+          commonGenes = [];
+          break;
+        }
+      }
+      commonGenes = pathwayInfo[tissues[j]][pathways[i]].filter(function(n) {
+          return pathwayInfo[tissues[j+1]][pathways[i]].indexOf(n) !== -1;
+      });
+
+      if(commonGenes.length < 1){
+        commonGenes = [];
+        break;
+      }
+    }
+
+    map[pathways[i]] = commonGenes;
+  }
+  return map;
+}
+
+$('#newick_export_modal').on('show.bs.modal', function (e) {
+    $('textarea[id$="nwk_export_spec"]').val(
+        tree.get_newick (
+            function (node) {
+                var tags = [];
+                selection_set.forEach (function (d) { if (node[d]) {tags.push(d)}; });
+                if (tags.length) {
+                    return "{" + tags.join (",") + "}";
+                }
+                return "";
+            }
+        )
+    );
+});
+
+$("#newick_file").on ("change", function (e) {
+    var files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
+
+      reader.onload = (function(theFile) {
+        return function(e) {
+            var res = d3.layout.newick_parser (e.target.result);
+
+            if (res["json"]) {
+                if (!("children" in res["json"])) {
+                    res["error"] = "Empty tree";
+                }
+            }
+
+            var warning_div = d3.select ("#main_display").insert ("div", ":first-child");
+            if (res["error"]) {
+                warning_div.attr ("class", "alert alert-danger alert-dismissable")
+                            .html ("<strong>Newick parser error for file " + f.name +": </strong> In file " + res["error"]);
+
+            } else {
+                pathwayInfo = {};
+                default_tree_settings ();
+                tree (res).svg (svg).layout();
+                warning_div.attr ("class", "alert alert-success alert-dismissable")
+                            .html ("Loaded a tree from  file <strong>" + f.name +": </strong>");
+            }
+            warning_div.append ("button")
+                       .attr ("type", "button")
+                       .attr ("class", "close")
+                       .attr ("data-dismiss", "alert")
+                       .attr ("aria-hidden", "true")
+                       .html ("&times;");
+        };
+      })(f);
+
+      reader.readAsText(f);
+    }
+});
+
+$("#export_svg").on ("click", function (e) {
+  var svg = $("svg")[0];
+  saveSvgAsPng(svg, "tree.png", {scale: 2.0, backgroundColor: "white" });
+});
+
+$("#go_help_modal").on ("click", function (e) {
+  showModal("helpModal");
+});
+
+$("#biological_file").on ("change", function (e) {
+    var files = e.target.files; // FileList object
+
+    if (files.length == 1) {
+      var f = files[0];
+      var reader = new FileReader();
+
+      reader.onload = (function(theFile) {
+        return function(e) {
+            var text = e.target.result;
+            parseBioFile(text);
+      };
+      })(f);
+
+      reader.readAsText(f);
+    }
+});
+
+function d3_phylotree_is_leafnode(node) {
+    return !(node.children && node.children.length);
+}
+
+
+
+$('#bioModal').on('hidden.bs.modal', function (e) {
+        document.title = "BioTree Viewer";
+});
+
+$("#display_tree").on ("click", function (e) {
+    tree.options ({'branches' : 'straight'}, true);
+});
+
+$("#mp_label").on ("click", function (e) {
+    tree.max_parsimony (true);
+});
+
+$ ("[data-direction]").on ("click", function (e) {
+    var which_function = $(this).data ("direction") == 'vertical' ? tree.spacing_x : tree.spacing_y;
+    which_function (which_function () + (+ $(this).data ("amount"))).update();
+});
+
+
+
+
+$(".phylotree-layout-mode").on ("change", function (e) {
+    if ($(this).is(':checked')) {
+        if (tree.radial () != ($(this).data ("mode") == "radial")) {
+            tree.radial (!tree.radial ()).placenodes().update ();
+        }
+    }
+});
+
+$(".phylotree-align-toggler").on ("change", function (e) {
+    if ($(this).is(':checked')) {
+        if (tree.align_tips ($(this).data ("align") == "right")) {
+            tree.placenodes().update ();
+        }
+    }
+});
+
+
+
+
+
+function sort_nodes (asc) {
+    tree.traverse_and_compute (function (n) {
+            var d = 1;
+            if (n.children && n.children.length) {
+                d += d3.max (n.children, function (d) { return d["count_depth"];});
+            }
+            n["count_depth"] = d;
+        });
+        tree.resort_children (function (a,b) {
+            return (a["count_depth"] - b["count_depth"]) * (asc ? 1 : -1);
+        });
+}
+
+$("#sort_original").on ("click", function (e) {
+    tree.resort_children (function (a,b) {
+        return a["original_child_order"] - b["original_child_order"];
+    });
+});
+
+$("#sort_ascending").on ("click", function (e) {
+    sort_nodes (true);
+});
+
+$("#sort_descending").on ("click", function (e) {
+    sort_nodes (false);
+});
+
+$("#and_label").on ("click", function (e) {
+    tree.internal_label (function (d) { return d.reduce (function (prev, curr) { return curr[current_selection_name] && prev; }, true)}, true);
+});
+
+$("#or_label").on ("click", function (e) {
+    tree.internal_label (function (d) { return d.reduce (function (prev, curr) { return curr[current_selection_name] || prev; }, false)}, true);
+});
+
+
+$("#filter_add").on ("click", function (e) {
+    tree.modify_selection (function (d) { return d.tag || d[current_selection_name];}, current_selection_name, false, true)
+        .modify_selection (function (d) { return false; }, "tag", false, false);
+});
+
+$("#filter_remove").on ("click", function (e) {
+    tree.modify_selection (function (d) { return !d.tag;});
+});
+
+$("#select_all").on ("click", function (e) {
+    tree.modify_selection (function (d) { return true;});
+});
+
+$("#select_all_internal").on ("click", function (e) {
+    tree.modify_selection (function (d) { return !d3_phylotree_is_leafnode (d.target);});
+});
+
+$("#select_all_leaves").on ("click", function (e) {
+    tree.modify_selection (function (d) { return d3_phylotree_is_leafnode (d.target);});
+});
+
+
+$("#select_none").on ("click", function (e) {
+    tree.modify_selection (function (d) { return false;});
+});
+
+$("#clear_internal").on ("click", function (e) {
+    tree.modify_selection (function (d) { return d3_phylotree_is_leafnode (d.target) ? d.target[current_selection_name] : false;});
+});
+
+$("#clear_leaves").on ("click", function (e) {
+    tree.modify_selection (function (d) { return !d3_phylotree_is_leafnode (d.target) ? d.target[current_selection_name] : false;});
+});
+
+
+$("#display_dengrogram").on ("click", function (e) {
+    tree.options ({'branches' : 'step'}, true);
+});
+
+//    phylotree.modify_selection = function (callback, attr, place, skip_refresh, mode) {
+
+
+$("#branch_filter").on ("input propertychange", function (e) {
+   var filter_value = $(this).val();
+
+   var rx = new RegExp (filter_value,"i");
+
+  tree.modify_selection (function (n) {
+    return filter_value.length && (tree.branch_name () (n.target).search (rx)) != -1;
+   },"tag");
+
+});
+
+$("#validate_newick").on ("click", function (e) {
+    var res = d3.layout.newick_parser ( $('textarea[id$="nwk_spec"]').val(), true);
+    if (res["error"] || ! res["json"]) {
+        var warning_div = d3.select ("#newick_body").selectAll ("div  .alert-danger").data ([res["error"]])
+        warning_div.enter ().append ("div");
+        warning_div.html (function (d) {return d;}).attr ("class", "alert-danger");
+
+    } else {
+        default_tree_settings ();
+         tree (res).svg (svg).layout();
+        $('#newick_modal').modal('hide');
+    }
+});
+
+function default_tree_settings () {
+    tree.branch_length (null);
+    tree.branch_name (null);
+    tree.node_span ('equal');
+    tree.options ({'draw-size-bubbles' : false}, false);
+    //tree.radial (true);
+    tree.style_nodes (node_colorizer);
+    tree.style_edges (edge_colorizer);
+    tree.selection_label (current_selection_name);
+    tree.node_circle_size (5);
+    tree.align_tips("right");
+}
+
+function update_controls () {
+    $("[data-mode='" + (tree.radial()      ? 'radial' : 'linear') + "']").click();
+    $("[data-align='"  + (tree.align_tips () ? 'right' : 'left') + "']").click();
+};
+
+
+var colorTipMapping = {'Adipose_Subcutaneous': '#66CD00',
+                       'Adipose_Visceral_Omentum' : '#66CD00',
+                       'Adrenal_Gland' : '#66CD00',
+                       'Breast_Mammary_Tissue' : '#66CD00',
+                       'Kidney_Cortex' : '#66CD00',
+                       'Minor_Salivary_Gland' : '#66CD00',
+                       'Ovary_' : '#66CD00',
+                       'Pituitary_' : '#66CD00',
+                       'Prostate_' : '#66CD00',
+                       'Testis_' : '#66CD00',
+                       'Thyroid_' : '#66CD00',
+                       'Artery_Aorta' : 'red',
+                       'Artery_Coronary' : 'red',
+                       'Artery_Tibial' : 'red',
+                       'Heart_Atrial_Appendage' : 'red',
+                       'Heart_Left_Ventricle' : 'red',
+                       'Brain_Amygdala' : 'purple',
+                       'Brain_Anterior_Cingulate_Cortex_BA24' : 'purple',
+                       'Brain_Caudate_Basal_Ganglia' : 'purple',
+                       'Brain_Cerebellar_Hemisphere' : 'purple',
+                       'Brain_Cerebellum' : 'purple',
+                       'Brain_Cortex' : 'purple',
+                       'Brain_Frontal_Cortex_BA9' : 'purple',
+                       'Brain_Hippocampus' : 'purple',
+                       'Brain_Hypothalamus' : 'purple',
+                       'Brain_Nucleus_Accumbens_Basal_Ganglia' : 'purple',
+                       'Brain_Putamen_Basal_Ganglia' : 'purple',
+                       'Brain_Spinal_Cord_cervical_c1' : 'purple',
+                       'Brain_Substantia_Nigra' : 'purple',
+                       'Nerve_Tibial' : 'purple',
+                       'Cells_EBV_Transformed_Lymphocytes' : 'blue',
+                       'Cells_Transformed_Fibroblasts' : 'blue',
+                       'Skin_Not_Sun_Exposed_Suprapubic' : 'blue',
+                       'Skin_Sun_Exposed_Lower_Leg' : 'blue',
+                       'Colon_Sigmoid' : 'brown',
+                       'Colon_Transverse' : 'brown',
+                       'Esophagus_Gastroesophageal_Junction'  : 'brown',
+                       'Esophagus_Mucosa' : 'brown',
+                       'Esophagus_Muscularis' : 'brown',
+                       'Liver_' : 'brown',
+                       'Pancreas_' : 'brown',
+                       'Small_Intestine_Terminal_Ileum' : 'brown',
+                       'Stomach_' : 'brown',
+                       'Lung_' : 'pink',
+                       'Muscle_Skeletal' : 'black',
+                       'Spleen_' : '#FFE4C4',
+                       'Whole_Blood' : '#FFE4C4',
+                       'Uterus_' : 'orange',
+                       'Vagina_' : 'orange'
+                     };
+
+function node_colorizer (element, data) {
+try{
+   var count_class = 0;
+
+    selection_set.forEach (function (d,i) {
+      if (data[d]){
+        count_class ++;
+        element.style ("fill", color_scheme(i), i == current_selection_id ?  "important" : null);
+      }
+    });
+    if (count_class > 1) {
+
+    } else {
+        if (count_class == 0) {
+            element.style ("fill", null);
+            if(data.name != ""){
+              if(colorTipMapping.hasOwnProperty(data.name))
+                element.style("fill", colorTipMapping[data.name]);
+              else {
+                element.style ("fill", null);
+              }
+            }
+       }
+    }
+}
+catch (e) {
+
+}
+
+}
+
+function edge_colorizer (element, data) {
+   //console.log (data[current_selection_name]);
+try {
+    var count_class = 0;
+
+    selection_set.forEach (function (d,i) { if (data[d]) {count_class ++; element.style ("stroke", color_scheme(i), i == current_selection_id ?  "important" : null);}});
+
+    if (count_class > 1) {
+        element.classed ("branch-multiple", true);
+    } else
+    if (count_class == 0) {
+             element.style ("stroke", null)
+                   .classed ("branch-multiple", false);
+    }
+}
+catch (e) {
+}
+
+}
+
+var valid_id = new RegExp ("^[\\w]+$");
+
+$("#selection_name_box").on ("input propertychange", function (e) {
+   var name = $(this).val();
+
+   var accept_name = (selection_set.indexOf (name) < 0) &&
+                     valid_id.exec (name) ;
+
+   d3.select ("#save_selection_button").classed ("disabled", accept_name ? null : true );
+});
+
+$("#selection_rename > a").on ("click", function (e) {
+
+    d3.select ("#save_selection_button")
+           .classed ("disabled",true)
+           .on ("click", function (e) { // save selection handler
+                var old_selection_name = current_selection_name;
+                selection_set[current_selection_id] = current_selection_name = $("#selection_name_box").val();
+
+                if (old_selection_name != current_selection_name) {
+                    tree.update_key_name (old_selection_name, current_selection_name);
+                    update_selection_names (current_selection_id);
+                }
+                send_click_event_to_menu_objects (new CustomEvent (selection_menu_element_action,
+                             {'detail' : ['save', this]}));
+           });
+
+    d3.select ("#cancel_selection_button")
+               .classed ("disabled",false)
+               .on ("click", function (e) { // save selection handler
+                    $("#selection_name_box").val(current_selection_name);
+                    send_click_event_to_menu_objects (new CustomEvent (selection_menu_element_action,
+                                 {'detail' : ['cancel', this]}));
+              });
+
+    send_click_event_to_menu_objects (new CustomEvent (selection_menu_element_action,
+                                 {'detail' : ['rename', this]}));
+    e.preventDefault    ();
+});
+
+$("#selection_delete > a").on ("click", function (e) {
+
+    tree.update_key_name (selection_set[current_selection_id], null)
+    selection_set.splice (current_selection_id, 1);
+
+    if (current_selection_id > 0) {
+        current_selection_id --;
+    }
+    current_selection_name = selection_set[current_selection_id];
+    update_selection_names (current_selection_id)
+    $("#selection_name_box").val(current_selection_name)
+
+
+    send_click_event_to_menu_objects (new CustomEvent (selection_menu_element_action,
+                                 {'detail' : ['save', this]}));
+    e.preventDefault    ();
+
+});
+
+$("#selection_new > a").on ("click", function (e) {
+
+    d3.select ("#save_selection_button")
+               .classed ("disabled",true)
+               .on ("click", function (e) { // save selection handler
+                    current_selection_name = $("#selection_name_box").val();
+                    current_selection_id = selection_set.length;
+                    selection_set.push (current_selection_name);
+                    update_selection_names (current_selection_id);
+                    send_click_event_to_menu_objects (new CustomEvent (selection_menu_element_action,
+                                 {'detail' : ['save', this]}));
+              });
+
+     d3.select ("#cancel_selection_button")
+               .classed ("disabled",false)
+               .on ("click", function (e) { // save selection handler
+                    $("#selection_name_box").val(current_selection_name);
+                    send_click_event_to_menu_objects (new CustomEvent (selection_menu_element_action,
+                                 {'detail' : ['cancel', this]}));
+              });
+
+    send_click_event_to_menu_objects (new CustomEvent (selection_menu_element_action,
+                                 {'detail' : ['new', this]}));
+    e.preventDefault    ();
+
+});
+
+function send_click_event_to_menu_objects (e) {
+    $("#selection_new, #selection_delete, #selection_rename, #save_selection_name, #selection_name_box, #selection_name_dropdown").get().forEach (
+        function (d) {
+            d.dispatchEvent (e);
+        }
+    );
+}
+
+function update_selection_names (id, skip_rebuild) {
+
+    skip_rebuild = skip_rebuild || false;
+    id = id || 0;
+
+
+    current_selection_name = selection_set[id];
+    current_selection_id = id;
+
+    if (!skip_rebuild) {
+        d3.selectAll (".selection_set").remove();
+
+        d3.select ("#selection_name_dropdown")
+          .selectAll (".selection_set")
+          .data (selection_set)
+          .enter()
+          .append ("li")
+          .attr ("class", "selection_set")
+          .append ("a")
+          .attr ("href", "#")
+          .text (function (d) { return d;})
+          .style ("color", function (d,i) {return color_scheme(i);})
+          .on ("click", function (d,i) {update_selection_names (i,true);});
+
+    }
+
+
+    d3.select ("#selection_name_box")
+      .style ("color",  color_scheme(id))
+      .property ("value", current_selection_name);
+
+    tree.selection_label (selection_set[id]);
+}
+
+var width  = 800, //$(container_id).width(),
+    height = 600, //$(container_id).height()
+    selection_set = ['Foreground'],
+    current_selection_name = $("#selection_name_box").val(),
+    current_selection_id = 0,
+    max_selections       = 10;
+    color_scheme = d3.scale.category10(),
+    selection_menu_element_action = "phylotree_menu_element_action";
+
+var tree = d3.layout.phylotree("body")
+    .size([height, width])
+    .separation (function (a,b) {return 0;})
+    .count_handler (function (count) {
+            $("#selected_branch_counter").text (function (d) {return count[current_selection_name];});
+            $("#selected_filtered_counter").text (count.tag);
+        }
+    );
+    //.node_span (function (a) {if (a.children && a.children.length) return 1; return isNaN (parseFloat (a["attribute"]) * 100) ? 1 : parseFloat (a["attribute"]) * 100; });
+
+var test_string = "(((EELA:0.150276,CONGERA:0.213019):0.230956,(EELB:0.263487,CONGERB:0.202633):0.246917):0.094785,((CAVEFISH:0.451027,(GOLDFISH:0.340495,ZEBRAFISH:0.390163):0.220565):0.067778,((((((NSAM:0.008113,NARG:0.014065):0.052991,SPUN:0.061003,(SMIC:0.027806,SDIA:0.015298,SXAN:0.046873):0.046977):0.009822,(NAUR:0.081298,(SSPI:0.023876,STIE:0.013652):0.058179):0.091775):0.073346,(MVIO:0.012271,MBER:0.039798):0.178835):0.147992,((BFNKILLIFISH:0.317455,(ONIL:0.029217,XCAU:0.084388):0.201166):0.055908,THORNYHEAD:0.252481):0.061905):0.157214,LAMPFISH:0.717196,((SCABBARDA:0.189684,SCABBARDB:0.362015):0.282263,((VIPERFISH:0.318217,BLACKDRAGON:0.109912):0.123642,LOOSEJAW:0.397100):0.287152):0.140663):0.206729):0.222485,(COELACANTH:0.558103,((CLAWEDFROG:0.441842,SALAMANDER:0.299607):0.135307,((CHAMELEON:0.771665,((PIGEON:0.150909,CHICKEN:0.172733):0.082163,ZEBRAFINCH:0.099172):0.272338):0.014055,((BOVINE:0.167569,DOLPHIN:0.157450):0.104783,ELEPHANT:0.166557):0.367205):0.050892):0.114731):0.295021)";
+var container_id = '#tree_container';
+//var test_string = "(a : 0.1, (b : 0.11, (c : 0.12, d : 0.13) : 0.14) : 0.15)";
+
+//window.setInterval (function () {});
+
+var svg = d3.select(container_id).append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+
+
+function selection_handler_name_box (e) {
+    var name_box = d3.select (this);
+     switch (e.detail[0]) {
+        case 'save':
+        case 'cancel':
+            name_box.property ("disabled", true)
+                    .style ("color",  color_scheme(current_selection_id));
+
+            break;
+        case 'new':
+            name_box.property ("disabled", false)
+                    .property ("value", "new_selection_name")
+                    .style ("color",  color_scheme(selection_set.length));
+            break;
+        case 'rename':
+           name_box.property ("disabled", false);
+           break;
+    }
+
+}
+
+function selection_handler_new (e) {
+    var element = d3.select (this);
+    $(this).data('tooltip', false);
+    switch (e.detail[0]) {
+        case 'save':
+        case 'cancel':
+            if (selection_set.length == max_selections) {
+                element.classed ("disabled", true);
+                    $(this).tooltip ({'title' : 'Up to ' + max_selections + ' are allowed', 'placement' : 'left'});
+            } else {
+                element.classed ("disabled", null);
+            }
+            break;
+        default:
+            element.classed ("disabled", true);
+            break;
+
+    }
+}
+
+function selection_handler_rename (e) {
+    var element = d3.select (this);
+    element.classed ("disabled", (e.detail[0] == "save" || e.detail[0] == "cancel") ? null : true);
+}
+
+function selection_handler_save_selection_name (e) {
+    var element = d3.select (this);
+    element.style ("display", (e.detail[0] == "save" || e.detail[0] == "cancel") ? "none" : null);
+}
+
+function selection_handler_name_dropdown (e) {
+    var element = d3.select (this).selectAll (".selection_set");
+    element.classed ("disabled", (e.detail[0] == "save" || e.detail[0] == "cancel") ? null : true);
+}
+
+function selection_handler_delete (e) {
+    var element = d3.select (this);
+    $(this).tooltip('destroy');
+    switch (e.detail[0]) {
+        case 'save':
+        case 'cancel':
+            if (selection_set.length == 1) {
+                element.classed ("disabled", true);
+                    $(this).tooltip ({'title' : 'At least one named selection set <br> is required;<br>it can be empty, however', 'placement' : 'bottom', 'html': true});
+            } else {
+                element.classed ("disabled", null);
+            }
+            break;
+        default:
+            element.classed ("disabled", true);
+            break;
+
+    }}
+
+var fileName = "Data";
+
+$( document ).ready( function () {
+  document.title = "BioTree Viewer";
+
+  $('#biologicalTable').DataTable({
+    dom: 'Bfrtip',
+    columns : [ {title: "Pathways"},
+                {title: "Genes"}
+              ],
+              buttons: [
+                      {
+                        extend: 'excelHtml5',
+                        filename: fileName
+                      },
+                      {
+                        extend: 'csvHtml5',
+                        //filename: function () { getExportFileName();}
+                      }
+                  ]
+    });
+
+
+  var flu_tree = "(Whole_Blood:0.3122783844,(((((Skin_Not_Sun_Exposed_Suprapubic:0,Thyroid_:0):0.0588429397,Muscle_Skeletal:0.08401420316):0.02715287273,Esophagus_Mucosa:0.09784712727):0.06007071719,Brain_Cerebellar_Hemisphere:0.2250483304):0.01358281476,Adipose_Visceral_Omentum:0.1849020337):0.03387484965,(((((((Cells_EBV_Transformed_Lymphocytes:4.554761127e-17,Esophagus_Muscularis:-4.554761127e-17):0.05721279794,Brain_Cerebellum:0.1427872021):0.07666146583,Brain_Cortex:0.2042909151):0.04273579268,Colon_Sigmoid:0.2231372232):0.01312059902,Pancreas_:0.3155229796):0.03896596302,(((((Cells_Transformed_Fibroblasts:0.2975492236,Minor_Salivary_Gland:0.2738793478):0.007444286867,(((Colon_Transverse:0.1927909699,Small_Intestine_Terminal_Ileum:0.1960979189):0.03078848839,Kidney_Cortex:0.2739918734):0.06710338717,Stomach_:0.3290634305):0.03237672963):0.02974809493,(((((Brain_Amygdala:0.1709528692,Brain_Hypothalamus:0.1711523939):0.006996241515,((Brain_Anterior_Cingulate_Cortex_BA24:0.1577640757,Brain_Putamen_Basal_Ganglia:0.1570507391):0.0105046254,(Brain_Caudate_Basal_Ganglia:0.08793372619,Brain_Nucleus_Accumbens_Basal_Ganglia:0.08349484524):0.06110236365):0.041760572):0.03760045987,(Brain_Frontal_Cortex_BA9:0.1559370874,Brain_Hippocampus:0.1419352531):0.0827731844):0.06591116231,Brain_Substantia_Nigra:0.257543565):0.02835499508,Brain_Spinal_Cord_cervical_c1:0.238000371):0.08452862554):0.02758828851,(((((Adrenal_Gland:0.2991347122,Ovary_:0.3008652878):0.07135326715,(((((((Adipose_Subcutaneous:7.558965274e-17,Artery_Aorta:-7.558965274e-17):7.723290606e-17,Artery_Tibial:-7.723290606e-17):7.894919286e-17,Skin_Sun_Exposed_Lower_Leg:-7.894919286e-17):1.614869854e-16,Breast_Mammary_Tissue:-1.614869854e-16):1.652424967e-16,Nerve_Tibial:-1.652424967e-16):1.691768418e-16,Pituitary_:-1.691768418e-16):0.2504856698,Prostate_:0.2495143302):0.1203133995):0.03938844092,Uterus_:0.3522782257):0.03146627181,Testis_:0.4565793631):0.0300065198,Artery_Coronary:0.4451953616):0.07312386146):0.02239159627,(((Lung_:0.0837956809,Vagina_:0.1162043191):0.06685143421,Spleen_:0.3831485658):0.04138303333,Liver_:0.1661344492):0.1058172833):0.02526210345):0.02537542596,((Heart_Atrial_Appendage:0.143981632,Heart_Left_Ventricle:0.2677830739):0.02452577644,Esophagus_Gastroesophageal_Junction:0.2161159348):0.04338147834):0.00399547284)";
+    default_tree_settings();
+    tree(flu_tree).svg (svg).layout();
+    //$("#selection_new").get(0).addEventListener(selection_menu_element_action,selection_handler_new,false);
+    //$("#selection_rename").get(0).addEventListener(selection_menu_element_action,selection_handler_rename,false);
+    //$("#selection_delete").get(0).addEventListener(selection_menu_element_action,selection_handler_delete,false);
+    //$("#selection_delete").get(0).dispatchEvent (new CustomEvent (selection_menu_element_action,
+    //                             {'detail' : ['cancel', null]}));
+    //$("#selection_name_box").get(0).addEventListener(selection_menu_element_action,selection_handler_name_box,false);
+    //$("#save_selection_name").get(0).addEventListener(selection_menu_element_action,selection_handler_save_selection_name,false);
+    //$("#selection_name_dropdown").get(0).addEventListener(selection_menu_element_action,selection_handler_name_dropdown,false);
+    update_selection_names();
+});
+
+
+
+
+</script>
+<script src="load_examples.js"></script>
+</body>
+</html>
